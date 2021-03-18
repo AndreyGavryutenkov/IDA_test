@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 /**
-    CollectionViewUtils. Used to configure cells for specific cell descriptors
+ TableViewUtils. Used to configure cells for specific cell descriptors
  */
 struct TableViewCellDescription {
     let cellType: BaseTableViewCell.Type
@@ -14,7 +14,7 @@ struct TableViewCellDescription {
     }
 }
 
-let UICollectionViewAutomaticDimension: CGFloat = -1.0
+
 
 extension UITableView {
 

@@ -18,7 +18,7 @@ class MainScreenViewController: BaseViewController, BaseViewProtocol, BaseViewCo
         rootView.tblResults.tableFooterView = UIView()
         rootView.tblResults.delegate = self
         rootView.tblResults.dataSource = self
-        
+        rootView.showLoading()
     }
 
 }
@@ -28,6 +28,7 @@ extension MainScreenViewController: MainScreenViewInput {
     
     func updateUI() {
         rootView.tblResults.reloadData()
+        rootView.hideLoading()
     }
 }
 

@@ -35,9 +35,7 @@ protocol FlowProtocol {
 
 
 extension FlowProtocol {
-    func goHome(animated: Bool = false) {
-        goHome(animated: animated)
-    }
+
     
     func dismissToRoot(animated: Bool = false){
         dismissToRoot(animated: animated)
@@ -117,7 +115,6 @@ extension FlowController: FlowProtocol {
                 self.rootViewController = vc
                 self.window.rootViewController = vc
                 self.window.makeKeyAndVisible()
-                
             } else {
                 self.rootViewController?.present(vc, animated: animated , completion: {
                 })

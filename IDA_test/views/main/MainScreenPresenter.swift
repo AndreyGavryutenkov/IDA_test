@@ -18,6 +18,7 @@ class MainScreenPresenter: MainScreenPresenterProtocol {
     }
     
     func didLoad() {
+        
         guard let url = URL(string: "https://picsum.photos/v2/list?page=1&limit=15") else { return }
         
         appController?.requestsManager.delegate = self

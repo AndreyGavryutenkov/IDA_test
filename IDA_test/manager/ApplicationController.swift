@@ -20,19 +20,14 @@ protocol ApplicationProtocol {
 
 
 class AppController {
-        
+    
     let flowController: FlowProtocol
-
     let requestsManager : RequestManager
-    
-    
-    
     
     init(with flowController: FlowProtocol) {
         self.flowController = flowController
         self.requestsManager = RequestManager()
-        
-        }
+    }
     
 }
 
@@ -40,7 +35,6 @@ class AppController {
 
 extension AppController: ApplicationProtocol {
     
-    //TODO: проверить наличие локальных данных                    <----------------- на будущее!!!!
     func run() {
         self.flowController.startFlowWith(initializer: .main, args: nil)
     }
