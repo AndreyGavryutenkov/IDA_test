@@ -13,14 +13,8 @@ import UIKit
 enum ArgsKey: String, CaseIterable {
     case moduleOutput = "modueOutput"
     case animated = "animated"
-    case userTagInteractiveMode = "UserTagInteractiveMode"
-    case info = "PhotoInfo"
-    case tagsWorkType = "TagsWorkActionType"
-    case location = "location"
-    case photoID = "photo id"
-    case pressPosition = "pressPosition"
-    case selectedTags = "selectedTags"
-    case userTagsInteractionMode = "userTagsInteractionMode"
+    case model = "model"
+   
 }
 
 

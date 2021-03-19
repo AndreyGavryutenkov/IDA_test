@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 protocol DetailScreenModuleInput: BaseModuleInput {
     
@@ -16,10 +17,12 @@ protocol DetailScreenModuleOutput: BaseModuleOutput {
 }
 
 protocol DetailScreenViewInput: BaseViewInput {
+    func updateUI()
+    func setImage(_ image: UIImage)
 }
 
 protocol DetailScreenViewOutput: BaseViewOutput {
-
+    var model: RMCharacter { get }
 }
 
 protocol DetailScreenPresenterProtocol: DetailScreenModuleInput, DetailScreenViewOutput {

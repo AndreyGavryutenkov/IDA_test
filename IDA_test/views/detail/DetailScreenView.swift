@@ -14,5 +14,13 @@ import UIKit
 
 class DetailScreenView: BaseScreenView {
     
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblOriginName: UILabel!
+    @IBOutlet weak var lblOriginURL: UILabel!
+    @IBOutlet weak var lblLocationName: UILabel!
+    @IBOutlet weak var lblLocationURL: UILabel!
+    @IBOutlet weak var tblEpisodes: UITableView!
+    @IBOutlet weak var imgCharacterImage: UIImageView!
+    
 }
 

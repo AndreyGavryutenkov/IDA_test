@@ -23,6 +23,8 @@ protocol MainScreenViewOutput: BaseViewOutput {
     var cellsDescriptions: [TableViewCellDescription] { get }
     
     func didSelect(_ idx: Int)
+    
+    func loadNextPage()
 }
 
 protocol MainScreenPresenterProtocol: MainScreenModuleInput, MainScreenViewOutput {

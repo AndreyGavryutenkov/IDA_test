@@ -6,30 +6,38 @@
 //
 
 import Foundation
+import UIKit
 
 typealias RequestQueries = [String: String]
 
 
 
 protocol RequestDelegate: class {
-    func recievedData(_ decoded: [ImageInfo])
+    func recievedData(_ decoded: MainInfo)
+}
+
+protocol DownloadDelegate: class {
+    func imageRecieved(_ image: UIImage?)
 }
 
 class RequestManager {
     private let session = URLSession(configuration: .default)
     weak var delegate: RequestDelegate?
+    weak var downloadDelegate: DownloadDelegate?
     
     func makeRequest<T: Codable>(for url: URL, ofType: T.Type) {
-        let session = URLSession(configuration: .default)
+
         let task = session.dataTask(with: url) { [weak self] (data, response, error) in
             guard let data = data, let decoded = self?.parse(data, ofType: ofType.self) else {  return }
             
             DispatchQueue.main.async {
-                self?.delegate?.recievedData(decoded as! [ImageInfo])
+                self?.delegate?.recievedData(decoded as! MainInfo)
             }
         }
         task.resume()
     }
+    
+
     
 }
 

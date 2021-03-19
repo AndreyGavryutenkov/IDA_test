@@ -19,14 +19,23 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="mqk-Pa-dfk">
-                    <rect key="frame" x="0.0" y="114" width="414" height="748"/>
+                    <rect key="frame" x="0.0" y="164" width="414" height="698"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                 </tableView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qH5-6s-Qoo">
-                    <rect key="frame" x="0.0" y="44" width="414" height="70"/>
+                    <rect key="frame" x="0.0" y="44" width="414" height="120"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="header" translatesAutoresizingMaskIntoConstraints="NO" id="BPb-SG-G1I">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="120"/>
+                        </imageView>
+                    </subviews>
                     <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="70" id="BvZ-nF-YlL"/>
+                        <constraint firstItem="BPb-SG-G1I" firstAttribute="leading" secondItem="qH5-6s-Qoo" secondAttribute="leading" id="08g-hk-JYJ"/>
+                        <constraint firstAttribute="height" constant="120" id="BvZ-nF-YlL"/>
+                        <constraint firstItem="BPb-SG-G1I" firstAttribute="top" secondItem="qH5-6s-Qoo" secondAttribute="top" id="Vgz-X1-vPx"/>
+                        <constraint firstAttribute="trailing" secondItem="BPb-SG-G1I" secondAttribute="trailing" id="lax-DJ-PPZ"/>
+                        <constraint firstAttribute="bottom" secondItem="BPb-SG-G1I" secondAttribute="bottom" id="sNh-ix-h9W"/>
                     </constraints>
                 </view>
             </subviews>
@@ -48,6 +57,7 @@
         </view>
     </objects>
     <resources>
+        <image name="header" width="1598" height="1076"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

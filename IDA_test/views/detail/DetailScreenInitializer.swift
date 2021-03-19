@@ -18,7 +18,9 @@ class DetailScreenInitializer: BaseInitializer {
         viewController.modalPresentationStyle = .overCurrentContext
         viewController.modalTransitionStyle = .crossDissolve
         
-        let presenter = DetailScreenPresenter(viewInput: inputView)
+        guard let args = args else { fatalError("Where is args with model?") }
+        
+        let presenter = DetailScreenPresenter(viewInput: inputView, args: args)
         (inputView as! BaseViewController).output = presenter
                 
         return viewController
