@@ -17,9 +17,7 @@ class ImageLoader {
     private let imageCache = NSCache<NSString, UIImage>()
     
     func loadImage(_ url: URL, _ completion: @escaping (Result<UIImage, Error>) -> Void) -> UUID? {
-        
-        var cache = NSCache<NSString, UIImage>()
-        
+                
         if let cachedImage = imageCache.object(forKey: url.absoluteString as NSString) {
             completion(.success(cachedImage))
             return nil
