@@ -40,20 +40,17 @@ extension ImageInfoTableViewCell: BaseTableViewCell{
         lblCharacterType.text = "Type: " + item.characterType
         lblAlive.text =  "life status:" +  item.status
         
-        
         guard let url = item.image else { return }
-        let requestId = appController?.imageLoader.loadImage(url, { (result) in
+        let requestId = appController?.imageLoader.loadImage(url) { (result) in
             do {
                 let image = try result.get()
-
                 DispatchQueue.main.async {
                   self.imgPhoto.image = image
                 }
-                
-              } catch {
-                print(error)
+              } catch (let error){
+                print(error.localizedDescription)
               }
-        })
+        }
 
         onReuse = {
           if let token = requestId {

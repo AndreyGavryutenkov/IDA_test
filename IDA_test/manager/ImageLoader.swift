@@ -14,47 +14,66 @@ class ImageLoader {
     private var loadedImages = [URL: UIImage]()
     private var runningRequests = [UUID: URLSessionDataTask]()
     
+    private let imageCache = NSCache<NSString, UIImage>()
     
     func loadImage(_ url: URL, _ completion: @escaping (Result<UIImage, Error>) -> Void) -> UUID? {
-        print(#function, "url: ", url.absoluteURL)
-      if let image = loadedImages[url] {
-        completion(.success(image))
-        return nil
-      }
-
-      let uuid = UUID()
-
-      let task = URLSession.shared.dataTask(with: url) { data, response, error in
         
-
-        if let data = data, let image = UIImage(data: data) {
-          self.loadedImages[url] = image
-          completion(.success(image))
-          return
-        }
-
-        guard let error = error else {
-          return
-        }
-
-        guard (error as NSError).code == NSURLErrorCancelled else {
-          completion(.failure(error))
-          return
+        var cache = NSCache<NSString, UIImage>()
+        
+        if let cachedImage = imageCache.object(forKey: url.absoluteString as NSString) {
+            completion(.success(cachedImage))
+            return nil
         }
         
-        self.runningRequests.removeValue(forKey: uuid)
-      }
-      task.resume()
-      runningRequests[uuid] = task
-      return uuid
+        let uuid = UUID()
+        
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            
+            
+            if let data = data, let image = self?.cachedImage(from: data, for: url.absoluteString as! NSString)  {
+                print("Image cached!\n")
+                completion(.success(image))
+                return
+            }
+            
+            guard let error = error else {
+                return
+            }
+            
+            guard (error as NSError).code == NSURLErrorCancelled else {
+                completion(.failure(error))
+                return
+            }
+            
+            self?.runningRequests.removeValue(forKey: uuid)
+        }
+        
+        task.resume()
+        runningRequests[uuid] = task
+        return uuid
     }
     
     
     func cancelLoad(_ uuid: UUID) {
-      runningRequests[uuid]?.cancel()
-      runningRequests.removeValue(forKey: uuid)
+        runningRequests[uuid]?.cancel()
+        runningRequests.removeValue(forKey: uuid)
     }
     
+}
+
+
+private extension ImageLoader {
+    
+    
+    func cachedImage(from data: Data, for key: NSString) -> UIImage? {
+        if let image = UIImage(data: data) {
+            print("Caching image from: ", key)
+            self.imageCache.setObject(image, forKey: key)
+            return image
+        }
+        
+        return nil
+    }
 }
 
 
