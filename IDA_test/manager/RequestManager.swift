@@ -11,25 +11,35 @@ import UIKit
 typealias RequestQueries = [String: String]
 
 
-
 protocol RequestDelegate: class {
-    func recievedData(_ decoded: MainInfo)
+    func recievedData<T: Codable>(_ decoded: T)
 }
 
-protocol DownloadDelegate: class {
-    func imageRecieved(_ image: UIImage?)
+
+protocol RequestManagerInterface {
+    
+    var delegate: RequestDelegate? { get set }
+    
+    func fetchData<T: Codable>(_ object: T.Type, for url: URL)
 }
+
 
 class RequestManager {
+    
     private let session = URLSession(configuration: .default)
     weak var delegate: RequestDelegate?
-    weak var downloadDelegate: DownloadDelegate?
     
-    func makeRequest<T: Codable>(for url: URL, ofType: T.Type) {
+}
 
+
+extension RequestManager: RequestManagerInterface {
+    
+    func fetchData<T: Codable>(_ object: T.Type, for url: URL){
+        
         let task = session.dataTask(with: url) { [weak self] (data, response, error) in
-            guard let data = data, let decoded = self?.parse(data, ofType: ofType.self) else {  return }
-            
+            guard let data = data,
+                  let decoded = self?.parse(data, ofType: object.self) else {  return }
+
             DispatchQueue.main.async {
                 self?.delegate?.recievedData(decoded as! MainInfo)
             }
@@ -37,11 +47,12 @@ class RequestManager {
         task.resume()
     }
     
-
     
 }
 
-extension RequestManager {
+
+
+private extension RequestManager {
 
     func parse<T: Codable>(_ data: Data, ofType: T.Type) -> T? {
         let jsonDecoder = JSONDecoder()

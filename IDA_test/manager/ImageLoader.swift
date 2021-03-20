@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-
+//typealias RequestHandler = (Result<UIImage, Error>) -> Void
 
 class ImageLoader {
     private var loadedImages = [URL: UIImage]()
@@ -16,7 +16,7 @@ class ImageLoader {
     
     private let imageCache = NSCache<NSString, UIImage>()
     
-    func loadImage(_ url: URL, _ completion: @escaping (Result<UIImage, Error>) -> Void) -> UUID? {
+    func loadImage(_ url: URL, _ completion: @escaping (Result<UIImage, Error>) -> Void ) -> UUID? {
                 
         if let cachedImage = imageCache.object(forKey: url.absoluteString as NSString) {
             completion(.success(cachedImage))
@@ -27,9 +27,8 @@ class ImageLoader {
         
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             
-            
-            if let data = data, let image = self?.cachedImage(from: data, for: url.absoluteString as! NSString)  {
-                print("Image cached!\n")
+            if let data = data,
+               let image = self?.cachedImage(from: data, for: url.absoluteString as NSString)  {
                 completion(.success(image))
                 return
             }

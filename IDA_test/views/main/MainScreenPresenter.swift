@@ -25,7 +25,7 @@ class MainScreenPresenter: MainScreenPresenterProtocol {
         guard let url = URL(string: "https://rickandmortyapi.com/api/character") else { return }
         
         appController?.requestsManager.delegate = self
-        appController?.requestsManager.makeRequest(for: url, ofType: MainInfo.self)
+        appController?.requestsManager.fetchData(MainInfo.self, for: url)
     }
     
     func didLoad() {
@@ -38,7 +38,7 @@ extension MainScreenPresenter: MainScreenViewOutput {
         guard let nextPageUrl = self.nextPage else { return }
         
         if hasNextPage {
-            appController?.requestsManager.makeRequest(for: nextPageUrl, ofType: MainInfo.self)
+            appController?.requestsManager.fetchData(MainInfo.self, for: nextPageUrl)
         }
         
     }
@@ -58,13 +58,14 @@ extension MainScreenPresenter: MainScreenViewOutput {
 }
 
 extension MainScreenPresenter: RequestDelegate {
-
-    
-    func recievedData(_ decoded: MainInfo) {
-        self.nextPage = decoded.info?.next
+    func recievedData<T: Codable>(_ decoded: T) {
+        
+        guard let mainInfo = decoded as? MainInfo else { viewInput.show(error: "Not correct Data recieved!"); return }
+        
+        self.nextPage = mainInfo.info?.next
 
         if self.nextPage == nil { self.hasNextPage = false }
-         let items = decoded.results?
+         let items = mainInfo.results?
             .compactMap({ TableViewCellDescription(
                             cellType: ImageInfoTableViewCell.self,
                             object: $0) }) ?? []

@@ -12,7 +12,7 @@ import Foundation
 protocol ApplicationProtocol {
     
     var flowController: FlowProtocol { get }
-    var requestsManager: RequestManager { get }
+    var requestsManager: RequestManagerInterface { get set}
     var imageLoader: ImageLoader { get }
     
     func run()
@@ -23,7 +23,7 @@ protocol ApplicationProtocol {
 class AppController {
     
     let flowController: FlowProtocol
-    let requestsManager : RequestManager
+    var requestsManager : RequestManagerInterface
     let imageLoader: ImageLoader
     
     init(with flowController: FlowProtocol) {
