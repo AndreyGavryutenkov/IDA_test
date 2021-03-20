@@ -41,7 +41,7 @@ extension RequestManager: RequestManagerInterface {
                   let decoded = self?.parse(data, ofType: object.self) else {  return }
 
             DispatchQueue.main.async {
-                self?.delegate?.recievedData(decoded as! MainInfo)
+                self?.delegate?.recievedData(decoded)
             }
         }
         task.resume()

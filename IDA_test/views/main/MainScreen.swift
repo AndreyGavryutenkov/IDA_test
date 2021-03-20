@@ -16,7 +16,8 @@ protocol MainScreenModuleOutput: BaseModuleOutput {
 }
 
 protocol MainScreenViewInput: BaseViewInput {
-    func updateUI()
+
+    func insertRowsAt(_ indexPath: [IndexPath])
 }
 
 protocol MainScreenViewOutput: BaseViewOutput {

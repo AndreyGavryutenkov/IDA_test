@@ -30,11 +30,17 @@ class MainScreenViewController: BaseViewController, BaseViewProtocol, BaseViewCo
 
 
 extension MainScreenViewController: MainScreenViewInput {
-    
-    func updateUI() {
-        rootView.tblResults.reloadData()
+    func insertRowsAt(_ indexPath: [IndexPath]) {
+        
         rootView.hideLoading()
+        
+        rootView.tblResults.beginUpdates()
+        rootView.tblResults.insertRows(at: indexPath, with: .automatic)
+        rootView.tblResults.endUpdates()
     }
+    
+    
+
 }
 
 
@@ -54,6 +60,7 @@ extension MainScreenViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         viewOutput?.didSelect(indexPath.row)
+        
     }
 
     

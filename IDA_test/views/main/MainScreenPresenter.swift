@@ -46,9 +46,7 @@ extension MainScreenPresenter: MainScreenViewOutput {
     func didSelect(_ idx: Int) {
         // получить картинку по ссылке и открыть новое вью
         
-        guard let character = (cellsDescriptions[idx].object as? RMCharacter) else { return }
-        let ID = character.id
-        
+        guard let character = (cellsDescriptions[idx].object as? RMCharacter) else { return }        
         var args: Args = [:]
         args[.model] = character
         appController?.flowController.startFlowWith(initializer: .detail, args: args)
@@ -64,16 +62,21 @@ extension MainScreenPresenter: RequestDelegate {
         
         self.nextPage = mainInfo.info?.next
 
+        
+        
         if self.nextPage == nil { self.hasNextPage = false }
-         let items = mainInfo.results?
+        
+        let items = mainInfo.results?
             .compactMap({ TableViewCellDescription(
                             cellType: ImageInfoTableViewCell.self,
                             object: $0) }) ?? []
         
         self.cellsDescriptions.append(contentsOf: items)
         
-
-        self.viewInput.updateUI()
+        let firstIndex =  self.cellsDescriptions.count - items.count
+        let lastIndex = self.cellsDescriptions.count - 1
+        let indexPath = Array(firstIndex...lastIndex).map({ IndexPath(row: $0, section: 0) })
+        self.viewInput.insertRowsAt(indexPath)
     }
     
 
