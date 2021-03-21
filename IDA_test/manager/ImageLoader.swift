@@ -15,6 +15,13 @@ class ImageLoader {
     private var runningRequests = [UUID: URLSessionDataTask]()
     
     private let imageCache = NSCache<NSString, UIImage>()
+    let netConditioner: NetworkAvailabilityInterface
+    
+    
+    init(with netConditioner: NetworkAvailabilityInterface) {
+        self.netConditioner = netConditioner
+    }
+    
     
     func loadImage(_ url: URL, _ completion: @escaping (Result<UIImage, Error>) -> Void ) -> UUID? {
                 
@@ -23,31 +30,38 @@ class ImageLoader {
             return nil
         }
         
-        let uuid = UUID()
         
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+        if netConditioner.isNetworkAvailable {
+            let uuid = UUID()
             
-            if let data = data,
-               let image = self?.cachedImage(from: data, for: url.absoluteString as NSString)  {
-                completion(.success(image))
-                return
+            let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+                
+                if let data = data,
+                   let image = self?.cachedImage(from: data, for: url.absoluteString as NSString)  {
+                    completion(.success(image))
+                    return
+                }
+                
+                guard let error = error else {
+                    return
+                }
+                
+                guard (error as NSError).code == NSURLErrorCancelled else {
+                    completion(.failure(error))
+                    return
+                }
+                
+                self?.runningRequests.removeValue(forKey: uuid)
             }
             
-            guard let error = error else {
-                return
-            }
-            
-            guard (error as NSError).code == NSURLErrorCancelled else {
-                completion(.failure(error))
-                return
-            }
-            
-            self?.runningRequests.removeValue(forKey: uuid)
+            task.resume()
+            runningRequests[uuid] = task
+            return uuid
+        } else {
+            return nil
         }
         
-        task.resume()
-        runningRequests[uuid] = task
-        return uuid
+        
     }
     
     
@@ -64,7 +78,6 @@ private extension ImageLoader {
     
     func cachedImage(from data: Data, for key: NSString) -> UIImage? {
         if let image = UIImage(data: data) {
-            print("Caching image from: ", key)
             self.imageCache.setObject(image, forKey: key)
             return image
         }

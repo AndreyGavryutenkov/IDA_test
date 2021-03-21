@@ -10,41 +10,62 @@ import UIKit
 
 typealias RequestQueries = [String: String]
 
+enum ConnectionState {
+    case connected
+    case disconnected
+}
 
 protocol RequestDelegate: class {
     func recievedData<T: Codable>(_ decoded: T)
+    
+    func connectionStateBecomes(_ newState: ConnectionState)
 }
 
 
 protocol RequestManagerInterface {
     
     var delegate: RequestDelegate? { get set }
-    
     func fetchData<T: Codable>(_ object: T.Type, for url: URL)
 }
 
 
 class RequestManager {
     
-    private let session = URLSession(configuration: .default)
+    private let session: URLSession
     weak var delegate: RequestDelegate?
+    var netConditioner: NetworkAvailabilityInterface
     
+    init (with netConditioner: NetworkAvailabilityInterface){
+        let configuration = URLSessionConfiguration.default
+        
+        let memoryCapacity = 500 * 1024 * 1024
+        let diskCapacity = 500 * 1024 * 1024
+        
+        configuration.requestCachePolicy =  .returnCacheDataElseLoad
+        configuration.urlCache = URLCache(memoryCapacity: memoryCapacity, diskCapacity: diskCapacity, diskPath: "shared_cache")
+        self.session = URLSession(configuration: configuration)
+        
+        self.netConditioner = netConditioner
+        self.netConditioner.delegate = self
+        
+    }
 }
 
 
 extension RequestManager: RequestManagerInterface {
     
     func fetchData<T: Codable>(_ object: T.Type, for url: URL){
-        
-        let task = session.dataTask(with: url) { [weak self] (data, response, error) in
-            guard let data = data,
-                  let decoded = self?.parse(data, ofType: object.self) else {  return }
+        if netConditioner.isNetworkAvailable {
+            let task = session.dataTask(with: url) { [weak self] (data, response, error) in
+                guard let data = data,
+                      let decoded = self?.parse(data, ofType: object.self) else {  return }
 
-            DispatchQueue.main.async {
-                self?.delegate?.recievedData(decoded)
+                DispatchQueue.main.async {
+                    self?.delegate?.recievedData(decoded)
+                }
             }
-        }
-        task.resume()
+            task.resume()
+        } 
     }
     
     
@@ -63,6 +84,24 @@ private extension RequestManager {
         return decodedData
     }
 }
+
+
+
+extension RequestManager: NetworkAvailabilityDelegate {
+    func disconnectFromNetwork() {
+        self.session.getAllTasks(){ tasks in
+            let _ = tasks.map({ if $0.state == .running { $0.cancel() } })
+        }
+        delegate?.connectionStateBecomes(.disconnected)
+    }
+    
+    func networkIsAvailableAgain() {
+        delegate?.connectionStateBecomes(.connected)
+    }
+    
+    
+}
+
 
 
 extension URL {

@@ -15,8 +15,8 @@ class MainScreenPresenter: MainScreenPresenterProtocol {
     var cellsDescriptions: [TableViewCellDescription] = []
     
     //MARK: Pagination
-    var hasNextPage: Bool = true
-    var nextPage: URL?
+    private var hasNextPage: Bool = true
+    private var nextPage: URL?
     
     
     init(viewInput: MainScreenViewInput) {
@@ -44,7 +44,6 @@ extension MainScreenPresenter: MainScreenViewOutput {
     }
     
     func didSelect(_ idx: Int) {
-        // получить картинку по ссылке и открыть новое вью
         
         guard let character = (cellsDescriptions[idx].object as? RMCharacter) else { return }        
         var args: Args = [:]
@@ -56,6 +55,17 @@ extension MainScreenPresenter: MainScreenViewOutput {
 }
 
 extension MainScreenPresenter: RequestDelegate {
+    
+    func connectionStateBecomes(_ newState: ConnectionState) {
+        switch newState{
+        case .connected:
+            print("Connected!")
+        case .disconnected:
+            print("Disconnected!")
+            viewInput.show(error: "Network disconnected! Try later.")
+        }
+    }
+    
     func recievedData<T: Codable>(_ decoded: T) {
         
         guard let mainInfo = decoded as? MainInfo else { viewInput.show(error: "Not correct Data recieved!"); return }
