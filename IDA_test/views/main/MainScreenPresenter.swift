@@ -22,10 +22,14 @@ class MainScreenPresenter: MainScreenPresenterProtocol {
     init(viewInput: MainScreenViewInput) {
         self.viewInput = viewInput
         
-        guard let url = URL(string: "https://rickandmortyapi.com/api/character") else { return }
+        let endpoint: Endpoint = .character(nil)
+        guard let finalURL = endpoint.url() else {
+            viewInput.show(error: "Could not get initial url")
+            return
+        }
         
         appController?.requestsManager.delegate = self
-        appController?.requestsManager.fetchData(MainInfo.self, for: url)
+        appController?.requestsManager.fetchData(MainInfo.self, for: finalURL)
     }
     
     func didLoad() {
@@ -38,7 +42,15 @@ extension MainScreenPresenter: MainScreenViewOutput {
         guard let nextPageUrl = self.nextPage else { return }
         
         if hasNextPage {
-            appController?.requestsManager.fetchData(MainInfo.self, for: nextPageUrl)
+            
+            guard let pageNo = nextPageUrl.valueOf("page"),
+                  let pageNumber = Int( pageNo ) else { viewInput.show(error: "Couldn't get next page"); return }
+            
+            let pageEndpoint: Endpoint = .page(pageNumber)
+            guard let nextPageURL = pageEndpoint.url()
+            else { viewInput.show(error: "Couldn't get URL for the next page"); return }
+            
+            appController?.requestsManager.fetchData(MainInfo.self, for: nextPageURL)
         }
         
     }
@@ -47,7 +59,7 @@ extension MainScreenPresenter: MainScreenViewOutput {
         
         guard let character = (cellsDescriptions[idx].object as? RMCharacter) else { return }        
         var args: Args = [:]
-        args[.model] = character
+        args[.characterID] = character.id
         appController?.flowController.startFlowWith(initializer: .detail, args: args)
     }
     

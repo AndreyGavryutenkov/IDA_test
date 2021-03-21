@@ -25,8 +25,8 @@ class ImageInfoTableViewCell: UITableViewCell {
 
       override func prepareForReuse() {
         super.prepareForReuse()
-        onReuse()
         imgPhoto.image = nil
+        onReuse()
       }
 
 }

@@ -22,7 +22,7 @@ protocol DetailScreenViewInput: BaseViewInput {
 }
 
 protocol DetailScreenViewOutput: BaseViewOutput {
-    var model: RMCharacter { get }
+    var model: RMCharacter? { get }
 }
 
 protocol DetailScreenPresenterProtocol: DetailScreenModuleInput, DetailScreenViewOutput {

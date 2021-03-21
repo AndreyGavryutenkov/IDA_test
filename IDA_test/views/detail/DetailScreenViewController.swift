@@ -34,11 +34,11 @@ class DetailScreenViewController: BaseViewController, BaseViewProtocol, BaseView
 
 extension DetailScreenViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewOutput?.model.episodes?.count ?? 0
+        return viewOutput?.model?.episodes?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let episode = viewOutput?.model.episodes?[indexPath.row]
+        guard let episode = viewOutput?.model?.episodes?[indexPath.row] else { return UITableViewCell() }
         let cell = tableView.configureCell(with: TableViewCellDescription(cellType: EpisodeTableViewCell.self,
                                                                           object: EpisodeTableViewCellObject(url: episode)),
                                            for: indexPath)
@@ -58,12 +58,15 @@ extension DetailScreenViewController: DetailScreenViewInput {
     }
     
     func updateUI() {
-        rootView.lblName.text = viewOutput?.model.name
-        rootView.lblOriginName.text = viewOutput?.model.origin?.name
-        rootView.lblOriginURL.text = viewOutput?.model.origin?.url
         
-        rootView.lblLocationName.text = viewOutput?.model.location?.name
-        rootView.lblLocationURL.text = viewOutput?.model.location?.url
+        guard let model = viewOutput?.model else { show(error: "Model lost!"); return }
+        
+        rootView.lblName.text = model.name
+        rootView.lblOriginName.text = model.origin?.name
+        rootView.lblOriginURL.text = model.origin?.url
+        
+        rootView.lblLocationName.text = model.location?.name
+        rootView.lblLocationURL.text = model.location?.url
         
         rootView.tblEpisodes.reloadData()
     }

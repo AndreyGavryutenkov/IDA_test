@@ -14,6 +14,7 @@ enum ArgsKey: String, CaseIterable {
     case moduleOutput = "modueOutput"
     case animated = "animated"
     case model = "model"
+    case characterID = "characterID"
    
 }
 
