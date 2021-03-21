@@ -51,7 +51,10 @@ extension DetailScreenViewController: UITableViewDataSource, UITableViewDelegate
 
 extension DetailScreenViewController: DetailScreenViewInput {
     func setImage(_ image: UIImage) {
-        rootView.imgCharacterImage.image = image
+        DispatchQueue.main.async { [weak self] in
+            self?.rootView.imgCharacterImage.image = image
+        }
+        
     }
     
     func updateUI() {
